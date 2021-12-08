@@ -6,34 +6,48 @@ set shiftwidth=2
 set expandtab
 set smartindent
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.config/nvim/plugged')
+
+Plug 'tpope/vim-fugitive'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 Plug 'ayu-theme/ayu-vim'
+Plug 'inkarkat/vim-extractmatches'
+Plug 'inkarkat/vim-ingo-library'
 
 Plug 'pangloss/vim-javascript'    " JavaScript support
 Plug 'leafgarland/typescript-vim' " TypeScript syntax
+
+Plug 'yuezk/vim-js'
 Plug 'maxmellon/vim-jsx-pretty'   " JS and JSX syntax
+Plug 'HerringtonDarkholme/yats.vim'
+
 Plug 'jparise/vim-graphql'        " GraphQL syntax
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-lists'
 
 Plug 'preservim/nerdtree'
+
+
 Plug 'Chiel92/vim-autoformat'
+
 Plug 'vim-scripts/Conque-Shell'
 Plug 'voldikss/vim-floaterm'
 Plug 'airblade/vim-gitgutter'
 
-Plug 'maxmellon/vim-jsx-pretty'
-Plug 'peitalin/vim-jsx-typescript'
+"Plug 'peitalin/vim-jsx-typescript'
 Plug 'styled-components/vim-styled-components'
 
 Plug 'alvan/vim-closetag'
 
+Plug '907th/vim-auto-save'
+"Plug 'styled-components/vim-styled-components'
 call plug#end()
+
+"let g:auto_save = 1  " enable AutoSave on Vim startup
 
 " CoC extensions
 let g:coc_global_extensions = ['coc-tsserver']
@@ -53,14 +67,14 @@ nnoremap <leader>k :FloatermKill!<CR>
 let NERDTreeShowHidden=1
 
 set termguicolors
-let ayucolor="light"
-colorscheme ayu 
+let ayucolor="dark"
+colorscheme  ayu
 
 let mapleader = " "
 nnoremap <leader>pv :Vex<CR>
-nnoremap <leader><CR> :so ~/.vimrc<CR>  
+nnoremap <leader><CR> :so ~/.config/nvim/init.vim<CR>
 
-nnoremap <C-p> :GFiles<CR>  
+nnoremap <C-p> :GFiles<CR>
 nnoremap <leader>pf :Files<CR>
 
 "nnoremap <C-j> :cnext<CR>
@@ -103,7 +117,7 @@ nnoremap <silent><C-k> m`:silent -g/\m^\s*$/d<CR>``:noh<CR>
 nnoremap <silent><A-j> :set paste<CR>m`o<Esc>``:set nopaste<CR>
 nnoremap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
-let g:python3_host_prog="/usr/lib/python"
+let g:python3_host_prog="/usr/bin/python"
 
 noremap <F3> :Autoformat<CR>
 
@@ -158,11 +172,11 @@ let g:closetag_emptyTags_caseSensitive = 1
 " Disables auto-close if not in a "valid" region (based on filetype)
 "
 let g:closetag_regions = {
-    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
-    \ 'javascript.jsx': 'jsxRegion',
-    \ 'typescriptreact': 'jsxRegion,tsxRegion',
-    \ 'javascriptreact': 'jsxRegion',
-    \ }
+      \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+      \ 'javascript.jsx': 'jsxRegion',
+      \ 'typescriptreact': 'jsxRegion,tsxRegion',
+      \ 'javascriptreact': 'jsxRegion',
+      \ }
 
 " Shortcut for closing tags, default is '>'
 "
@@ -170,9 +184,70 @@ let g:closetag_shortcut = '>'
 
 " Add > at current position without closing the current tag, default is ''
 "
-let g:closetag_close_shortcut = '<leader>>'
+"let g:closetag_close_shortcut = '<leader>>'
 
 nnoremap <leader>[ :bn<CR>
 nnoremap <leader>] :bl<CR>
 
 nnoremap <leader>a @a<CR>
+
+
+set clipboard=unnamedplus
+
+nnoremap <leader>` <S-v>:s/"/`/g<CR>:nohl<CR>
+nnoremap <leader>` <S-v>:s/'/`/g<CR>:nohl<CR>
+
+
+"au BufWrite * :Autoformat
+
+nnoremap <leader>m vat^[bb<Esc>
+nnoremap <leader>j i<CR><Esc>
+nnoremap <leader>s V:s/@material-ui\/core/@mui\/styles/g<CR>
+nnoremap <leader>ss V:s/@material-ui\/core/@mui\/material/g<CR>
+nnoremap <leader>t V:s/theme/theme: Theme/g<CR>
+
+" comment jsx
+nnoremap <leader>c _i{/*<Esc>lvatA*/}<Esc>
+nnoremap <leader>C _i{/*<Esc>lvt>lA*/}<Esc>
+nnoremap <leader>cc _3xvt>l<Esc>l3x
+
+nnoremap <leader>ii _V:s/@material-ui\/icons/@mui\/icons-material/g<CR>
+
+
+let g:formatdef_tsfmt = "'tsfmt --stdin '.bufname('%')"
+let g:formatters_typescriptreact = ['tsfmt']
+
+let g:auto_save_presave_hook = 'call AbortIfNotWanted()'
+
+function! AbortIfNotWanted()
+  if &filetype == 'javascript'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'typescript'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'typescriptreact'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'css'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'json'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'markdown'
+    let g:auto_save_abort = 0
+  elseif &filetype == 'html'
+    let g:auto_save_abort = 0
+  else
+    let g:auto_save_abort = 1
+  endif
+endfunction
+
+nnoremap <leader>e gg_i/** @jsxRuntime classic */<CR>/** @jsx jsx */<CR>import {css, jsx} from '@emotion/react';<CR><CR><Esc>
+nnoremap <leader>e1 gg_i/** @jsxRuntime classic */<CR>/** @jsx jsx */<CR>import {css} from '@emotion/react';<CR><CR><Esc>
+nnoremap <leader>e2 gg_i/** @jsxRuntime classic */<CR>/** @jsx jsx */<CR>import {jsx} from '@emotion/react';<CR><CR><Esc>
+
+
+nnoremap <leader>s :w<CR>
+
+
+"set diffoptIcont+=vertical
+"
+
+let g:autoformat_verbosemode=1
