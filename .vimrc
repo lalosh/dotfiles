@@ -1,14 +1,23 @@
 set number
+set cursorline
 set scrolloff=8
-set relativenumber
+"set relativenumber
 set tabstop=2 softtabstop=2
 set shiftwidth=2
 set expandtab
 set smartindent
 
+set spell
+set spelllang=en
+set spellfile=$HOME/vim-spell/en.utf-8.add
+
 call plug#begin('~/.config/nvim/plugged')
 
 Plug 'tpope/vim-fugitive'
+Plug 'tommcdo/vim-fugitive-blame-ext'
+
+Plug 'terryma/vim-multiple-cursors'
+Plug 'terryma/vim-expand-region'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -119,7 +128,7 @@ nnoremap <silent><A-k> :set paste<CR>m`O<Esc>``:set nopaste<CR>
 
 let g:python3_host_prog="/usr/bin/python"
 
-noremap <F3> :Autoformat<CR>
+noremap <F3> :w<CR>:Autoformat<CR>:w<CR>
 
 nnoremap <silent> K :call CocAction('doHover')<CR>
 nmap <leader>do <Plug>(coc-codeaction)
@@ -217,6 +226,14 @@ nnoremap <leader>ii _V:s/@material-ui\/icons/@mui\/icons-material/g<CR>
 let g:formatdef_tsfmt = "'tsfmt --stdin '.bufname('%')"
 let g:formatters_typescriptreact = ['tsfmt']
 
+
+let g:formatdef_javascript = "'js-beautify -f '.bufname('%').' -o'.bufname('%')"
+let g:formatters_javascript = ['javascript']
+
+
+let g:formatdef_javascriptreact = "'tsfmt --stdin '.bufname('%')"
+let g:formatters_javascriptreact = ['javascriptreact']
+
 let g:auto_save_presave_hook = 'call AbortIfNotWanted()'
 
 function! AbortIfNotWanted()
@@ -251,3 +268,11 @@ nnoremap <leader>s :w<CR>
 "
 
 let g:autoformat_verbosemode=1
+
+nnoremap <leader>v _v$%$y<Esc>
+nnoremap <leader>\ :Vex<Esc>
+
+
+
+au BufReadPost,BufNewFile * NERDTreeFind | wincmd l | '"
+
